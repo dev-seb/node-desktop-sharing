@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Client</title>
+</head>
+<body>
+    <video id="video" width="1280" height="720"></video>
+    <script src="video-player.js"></script>
+    <script src="robotjs-client.js"></script>
+    <script>
+    	let video = document.getElementById('video');
+		window.onload = function() {
+
+		    // Create WebSocket
+            let websocket = new WebSocket('ws://localhost:8080', 'udp');
+
+		    // Video
+		    let videoPlayer = new VideoPlayer();
+		    videoPlayer.init(websocket, video);
+
+            // Events
+            let rjsClient = new RobotJSClient();
+            rjsClient.init(websocket, video);
+
+		}
+    </script>
+</body>
+</html>

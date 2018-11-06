@@ -1,0 +1,19 @@
+{
+  "name": "websocket-streaming-server",
+  "version": "1.0.0",
+  "description": "Streaming video over WebSockets",
+  "license": "MIT",
+  "author": {
+    "name": "Sébastien Biziou",
+    "email": "sebastien.biziou@gmail.com"
+  },
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js"
+  },
+  "dependencies": {
+    "express": "^4.16.4",
+    "robotjs": "^0.5.1",
+    "websocket": "^1.0.23"
+  }
+}
