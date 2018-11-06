@@ -12,7 +12,7 @@
 		window.onload = function() {
 
 		    // Create WebSocket
-            let websocket = new WebSocket('ws://localhost:8080', 'udp');
+            let websocket = new WebSocket('ws://' + document.location.hostname + ':8080', 'udp');
 
 		    // Video
 		    let videoPlayer = new VideoPlayer();

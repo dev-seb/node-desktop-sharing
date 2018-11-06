@@ -17,10 +17,10 @@ function RobotJSClient() {
     this.init = function(websocket, element) {
         // Init WebSocket
         this.websocket = websocket;
-        // Bind Key listener
+        // Bind Key listeners
         window.addEventListener("keyup", this.handleEvent);
         window.addEventListener("keydown", this.handleEvent);
-        // Bind Mouse listener
+        // Bind Mouse listeners
         //element.addEventListener("click", this.handleEvent);
         element.addEventListener("dblclick", this.handleEvent);
         element.addEventListener("mousemove", this.handleEvent);
