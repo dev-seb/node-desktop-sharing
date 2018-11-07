@@ -9,6 +9,7 @@ let WebSocketServer = require('websocket').server;
 let spawn = require('child_process').spawn;
 
 let wsClient = null;
+let ffmpeg = null;
 
 function startServer()
 {
@@ -37,6 +38,12 @@ function startServer()
         });
         startScreenCasting();
     });
+    wsServer.on('close', function() {
+       if(ffmpeg) {
+           ffmpeg.stdin.pause();
+           ffmpeg.kill();
+       }
+    });
 }
 
 function startScreenCasting() {
@@ -59,12 +66,11 @@ function startScreenCasting() {
     // Start sending stream
     let args = [
         "-hide_banner",
-        "-loglevel", "verbose",
+        //"-loglevel", "verbose",
         "-threads", "0",
         "-video_size", "1920x1080",
         "-f", videoFormat, "-i", videoInput,
         "-vf", "crop=1920:1080:0:0",
-        "-deadline", "realtime",
         "-vcodec", "libx264",
         "-preset", "ultrafast",
         "-tune", "zerolatency",
@@ -84,7 +90,7 @@ function startScreenCasting() {
      * TODO: test fshow as input on Windows
      */
     console.log("ffmpeg " + args.join(" "));
-    let ffmpeg = spawn("ffmpeg", args);
+    ffmpeg = spawn("ffmpeg", args);
     ffmpeg.stdout.on('data', function(data) {
         if (wsClient != null) {
             // Send data to client
