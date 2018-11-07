@@ -57,11 +57,11 @@ Capture screen with ffmpeg, and send video data to client through WebSocket :
 
 ```javascript
     let args = [
-        "-video_size", "1920x1080",
-        "-f", "x11grab", "-i", ":0.0",
-        "-vcodec", "libx264", "-preset", "ultrafast", "-tune", "zerolatency", "-profile:v", "main",
-        "-g", "25", "-r", "25", "-b:v", "2M", "-keyint_min", "250", "-s", "1280x720",
-        "-strict", "experimental", "-pix_fmt", "yuv420p", "-movflags", "frag_keyframe+empty_moov",
+        "-threads", "0", "-video_size", "1920x1080",
+        "-f", videoFormat, "-i", videoInput, "-vf", "crop=1920:1080:0:0",
+        "-vcodec", "libx264", "-preset", "ultrafast", "-tune", "zerolatency",
+        "-vsync", "drop", "-g", "5", "-b", "1M", "-keyint_min", "250",
+        "-pix_fmt", "yuv420p", "-s", "1280x720", "-movflags", "frag_keyframe+empty_moov",
         "-an",
         "-f", "mp4",
         "-"
