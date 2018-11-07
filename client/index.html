@@ -8,18 +8,18 @@
     <script src="video-player.js"></script>
     <script src="robotjs-client.js"></script>
     <script>
-    	let video = document.getElementById('video');
+    	var video = document.getElementById('video');
 		window.onload = function() {
 
 		    // Create WebSocket
-            let websocket = new WebSocket('ws://' + document.location.hostname + ':8080', 'udp');
+            var websocket = new WebSocket('ws://' + document.location.hostname + ':8080', 'udp');
 
 		    // Video
-		    let videoPlayer = new VideoPlayer();
+		    var videoPlayer = new VideoPlayer();
 		    videoPlayer.init(websocket, video);
 
             // Events
-            let rjsClient = new RobotJSClient();
+            var rjsClient = new RobotJSClient();
             rjsClient.init(websocket, video);
 
 		}
