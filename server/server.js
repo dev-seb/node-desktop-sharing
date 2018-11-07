@@ -1,4 +1,5 @@
 let os = require('os');
+let process = require('process');
 let http = require('http');
 let net = require('net');
 let path = require('path');
@@ -8,11 +9,16 @@ let robot = require("robotjs");
 let WebSocketServer = require('websocket').server;
 let spawn = require('child_process').spawn;
 
+let httpServer = null;
+let wsServer = null;
 let wsClient = null;
 let ffmpeg = null;
+let isStopping = false;
 
 function startServer()
 {
+    console.log("startServer");
+
     // Website
     let website = express();
     website.use(express.static(path.resolve(__dirname, '../client/')));
@@ -21,11 +27,11 @@ function startServer()
     });
 
     // HTTP Server
-    let httpServer = http.createServer(website);
+    httpServer = http.createServer(website);
     httpServer.listen(8080);
 
     // Websocket Server
-    let wsServer = new WebSocketServer({
+    wsServer = new WebSocketServer({
         httpServer: httpServer,
         autoAcceptConnections: false
     });
@@ -39,14 +45,34 @@ function startServer()
         startScreenCasting();
     });
     wsServer.on('close', function() {
-       if(ffmpeg) {
-           ffmpeg.stdin.pause();
-           ffmpeg.kill();
-       }
+        stopScreenCasting();
     });
 }
 
+function stopServer() {
+    if(isStopping) {
+        return;
+    }
+    console.log("\nstopServer");
+    isStopping = true;
+    // Close client connection
+    if(wsClient) {
+        wsClient.close();
+    }
+    // Stop screen casting
+    stopScreenCasting();
+    // Close WebSocket server
+    wsServer.shutDown();
+    // Stop HTTP server
+    httpServer.close();
+    // Exit
+    console.log("exit");
+    process.exit(0);
+}
+
 function startScreenCasting() {
+    console.log("startScreenCasting");
+
     // Select input depending on server OS
     var videoFormat = '';
     var videoInput  = '';
@@ -89,6 +115,7 @@ function startScreenCasting() {
      * TODO: test HW acceleration with h264_nvenc
      * TODO: test fshow as input on Windows
      */
+    console.log("ffmepg command: ");
     console.log("ffmpeg " + args.join(" "));
     ffmpeg = spawn("ffmpeg", args);
     ffmpeg.stdout.on('data', function(data) {
@@ -102,8 +129,18 @@ function startScreenCasting() {
     });
 }
 
+function stopScreenCasting() {
+    console.log("stopScreenCasting");
+    if(ffmpeg) {
+        ffmpeg.stdin.pause();
+        ffmpeg.kill();
+        ffmpeg = null;
+    }
+    return true;
+}
+
 function handleEvent(event) {
-    console.log(event);
+    console.log("handleEvent: " + event);
     let type = event.type;
     switch(type) {
         case 'keydown':
@@ -166,3 +203,7 @@ function handleEvent(event) {
 }
 
 startServer();
+
+process.on('exit', stopServer);
+process.on('SIGINT', stopServer); // catch ctrl-c
+process.on('SIGTERM', stopServer); // catch kill
