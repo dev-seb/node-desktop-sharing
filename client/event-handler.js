@@ -1,8 +1,8 @@
-/*
- * RobotJS client
+/**
+ * Event Handler
  */
 
-function RobotJSClient() {
+function EventHandler() {
 
     var self = this;
 

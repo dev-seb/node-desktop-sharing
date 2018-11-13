@@ -6,7 +6,7 @@
 <body>
     <video id="video" width="1280" height="720"></video>
     <script src="video-player.js"></script>
-    <script src="robotjs-client.js"></script>
+    <script src="event-handler.js"></script>
     <script>
     	var video = document.getElementById('video');
 		window.onload = function() {
@@ -19,7 +19,7 @@
 		    videoPlayer.init(websocket, video);
 
             // Events
-            var rjsClient = new RobotJSClient();
+            var rjsClient = new EventHandler();
             rjsClient.init(websocket, video);
 
 		}

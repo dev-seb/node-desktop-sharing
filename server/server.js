@@ -38,6 +38,7 @@ function startServer()
     wsServer.on('request', function(request) {
         wsClient = request.accept('udp', request.origin);
         wsClient.on('message', function(message) {
+            //console.log("message: " + message.utf8Data);
             // Receive data from client
             let event = JSON.parse(message.utf8Data);
             handleEvent(event);
@@ -140,7 +141,10 @@ function stopScreenCasting() {
 }
 
 function handleEvent(event) {
-    console.log("handleEvent: " + event);
+    console.log("handleEvent: " + JSON.stringify(event));
+    if(!event.modifier) {
+        event.modifier = "none";
+    }
     let type = event.type;
     switch(type) {
         case 'keydown':
@@ -151,12 +155,7 @@ function handleEvent(event) {
                 robot.keyTap(key, event.modifier);
             }
             else {
-                if(event.modifier) {
-                    robot.keyToggle(key, state, event.modifier);
-                }
-                else {
-                    robot.keyToggle(key, state);
-                }
+                robot.keyToggle(key, state, event.modifier);
             }
             break;
         }
@@ -204,6 +203,6 @@ function handleEvent(event) {
 
 startServer();
 
-process.on('exit', stopServer);
+//process.on('exit', stopServer);
 process.on('SIGINT', stopServer); // catch ctrl-c
 process.on('SIGTERM', stopServer); // catch kill
